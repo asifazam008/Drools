@@ -1,0 +1,37 @@
+import com.drools.Drools.model.OrderRequest;
+import com.drools.Drools.model.CustomerType;
+global com.drools.Drools.model.OrderDiscount orderDiscount;
+
+dialect "mvel"
+
+rule "Age based discount"
+    when
+        $order: OrderRequest(age < 20 || age > 50)
+    then
+        System.out.println("==========Adding 10% discount for Kids/ senior customer=============");
+        orderDiscount.setDiscount(orderDiscount.getDiscount() + 10);
+end
+
+rule "Customer type based discount - Loyal customer"
+    when
+        $order: OrderRequest(customerType.value == "LOYAL")
+    then
+        System.out.println("==========Adding 5% discount for LOYAL customer=============");
+        orderDiscount.setDiscount(orderDiscount.getDiscount() + 5);
+end
+
+rule "Customer type based discount - others"
+    when
+        $order: OrderRequest(customerType.value != "LOYAL")
+    then
+        System.out.println("==========Adding 3% discount for NEW or DISSATISFIED customer=============");
+        orderDiscount.setDiscount(orderDiscount.getDiscount() + 3);
+end
+
+rule "Amount based discount"
+    when
+        $order: OrderRequest(amount > 1000)
+    then
+        System.out.println("==========Adding 5% discount for amount more than 1000$=============");
+        orderDiscount.setDiscount(orderDiscount.getDiscount() + 5);
+end
